@@ -1,1 +1,2698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0,
+               maximum-scale=1.0, user-scalable=no">
+
+<meta name="theme-color" content="#0f4c4c">
+
+<title>Hospital Selling Price & GP Calculator</title>
+
+<style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    font-family: Cambria, Georgia, serif;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background: #eef5f4;
+    color: #0f4c4c;
+    font-size: 10px;
+}
+
+body {
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 650px;
+    margin: auto;
+    padding: 10px;
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.logo-container {
+    background: #ffffff;
+    border: 1px solid #0f4c4c;
+    border-radius: 10px;
+    padding: 9px;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.logo {
+    color: #0f4c4c;
+    font-size: 19px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.logo-subtitle {
+    color: #0f4c4c;
+    font-size: 9px;
+    margin-top: 2px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.card {
+    background: #ffffff;
+    border: 1px solid #c5d9d7;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 7px rgba(15,76,76,0.08);
+}
+
+.card-title {
+    color: #0f4c4c;
+    font-size: 12px;
+    font-weight: bold;
+    border-bottom: 1px solid #c5d9d7;
+    padding-bottom: 6px;
+    margin-bottom: 9px;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+label {
+    display: block;
+    color: #0f4c4c;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+input {
+    width: 100%;
+    height: 34px;
+    padding: 5px 8px;
+    border: 1px solid #9bbdb9;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #0f4c4c;
+    font-size: 11px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #0f4c4c;
+    box-shadow: 0 0 0 2px rgba(15,76,76,0.10);
+}
+
+.form-group {
+    margin-bottom: 9px;
+}
+
+.readonly-box {
+    background: #f1f7f6;
+    font-weight: bold;
+}
+
+
+/* =========================================================
+   TWO COLUMN
+========================================================= */
+
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+
+/* =========================================================
+   PRODUCT SEARCH
+========================================================= */
+
+.search-box {
+    position: relative;
+}
+
+.product-list {
+    display: none;
+    position: relative;
+    max-height: 190px;
+    overflow-y: auto;
+    border: 1px solid #9bbdb9;
+    border-radius: 6px;
+    background: #ffffff;
+    z-index: 50;
+}
+
+.product-item {
+    padding: 8px;
+    border-bottom: 1px solid #e2eeee;
+    cursor: pointer;
+    color: #0f4c4c;
+}
+
+.product-item:last-child {
+    border-bottom: none;
+}
+
+.product-item:hover {
+    background: #e7f1f0;
+}
+
+.product-name {
+    font-weight: bold;
+    font-size: 10px;
+}
+
+.product-details {
+    color: #557575;
+    font-size: 9px;
+    margin-top: 2px;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+button {
+    width: 100%;
+    min-height: 35px;
+    border: none;
+    border-radius: 6px;
+    background: #0f4c4c;
+    color: #ffffff;
+    font-family: Cambria, Georgia, serif;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0b3d3d;
+}
+
+button:active {
+    transform: scale(0.99);
+}
+
+.secondary-btn {
+    background: #ffffff;
+    color: #0f4c4c;
+    border: 1px solid #0f4c4c;
+}
+
+.secondary-btn:hover {
+    background: #eef5f4;
+}
+
+
+/* =========================================================
+   RESET + SHARE BUTTONS
+========================================================= */
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.action-buttons button {
+    margin: 0;
+}
+
+
+/* =========================================================
+   RESULT BOX
+========================================================= */
+
+.result-box {
+    background: #e8f2f1;
+    border: 1px solid #9bbdb9;
+    border-radius: 8px;
+    padding: 9px;
+}
+
+.result-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid #c9dcda;
+}
+
+.result-row:last-child {
+    border-bottom: none;
+}
+
+.result-label {
+    font-weight: bold;
+}
+
+.result-value {
+    text-align: right;
+    font-weight: bold;
+}
+
+.highlight {
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   DETAILED CALCULATION
+========================================================= */
+
+.hidden-section {
+    display: none;
+}
+
+.detail-box {
+    background: #f7fbfa;
+    border: 1px dashed #0f4c4c;
+    border-radius: 8px;
+    padding: 9px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px 0;
+    border-bottom: 1px dotted #c6d9d7;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.formula-box {
+    background: #eef5f4;
+    border: 1px solid #c5d9d7;
+    border-radius: 6px;
+    padding: 8px;
+    margin-top: 8px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   PASSWORD MODAL
+========================================================= */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-box {
+    width: 90%;
+    max-width: 350px;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid #0f4c4c;
+}
+
+.modal-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: #0f4c4c;
+    margin-bottom: 10px;
+}
+
+.modal-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    margin-top: 8px;
+}
+
+.error {
+    color: #b42318;
+    font-weight: bold;
+    margin-top: 6px;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status {
+    font-size: 9px;
+    color: #557575;
+    margin-top: 5px;
+}
+
+.success {
+    color: #176b52;
+}
+
+.warning {
+    color: #a05a00;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+    text-align: center;
+    font-size: 8px;
+    color: #557575;
+    padding: 5px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .container {
+        padding: 7px;
+    }
+
+    .card {
+        padding: 9px;
+    }
+
+    input {
+        font-size: 12px;
+    }
+
+    button {
+        font-size: 11px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+<!-- =====================================================
+     LOGO
+===================================================== -->
+
+<div class="logo-container">
+
+    <div class="logo">
+        TYYKEM
+    </div>
+
+    <div class="logo-subtitle">
+        Hospital Selling Price & GP Calculator
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     PRODUCT SELECTION
+===================================================== -->
+
+<div class="card">
+
+    <div class="card-title">
+        Product Selection
+    </div>
+
+    <div class="form-group">
+
+        <label>
+            Search / Select Product
+        </label>
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="productSearch"
+                placeholder="Type product name or product code"
+                autocomplete="off"
+                oninput="searchProducts()">
+
+            <div
+                id="productList"
+                class="product-list">
+            </div>
+
+        </div>
+
+        <div
+            id="productStatus"
+            class="status">
+
+            Loading product master...
+
+        </div>
+
+    </div>
+
+
+    <div class="two-column">
+
+        <div class="form-group">
+
+            <label>
+                Product Code
+            </label>
+
+            <input
+                type="text"
+                id="productCode"
+                class="readonly-box"
+                readonly>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Pack Size
+            </label>
+
+            <input
+                type="text"
+                id="packSize"
+                class="readonly-box"
+                readonly>
+
+        </div>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            Product Name
+        </label>
+
+        <input
+            type="text"
+            id="productName"
+            class="readonly-box"
+            readonly>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>
+            MRP / Unit
+        </label>
+
+        <input
+            type="text"
+            id="mrp"
+            class="readonly-box"
+            readonly>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     HOSPITAL DEAL DETAILS
+===================================================== -->
+
+<div class="card">
+
+    <div class="card-title">
+        Hospital Deal Details
+    </div>
+
+
+    <div class="two-column">
+
+        <div class="form-group">
+
+            <label>
+                Deal Rate %
+            </label>
+
+            <input
+                type="number"
+                id="dealRate"
+                placeholder="e.g. 30"
+                min="0"
+                max="100"
+                step="0.01"
+                inputmode="decimal">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Bonus Qty
+            </label>
+
+            <input
+                type="text"
+                id="bonusQty"
+                placeholder="e.g. 10+2"
+                inputmode="text">
+
+        </div>
+
+    </div>
+
+
+    <button onclick="calculateGP()">
+        CALCULATE
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     RESULT
+===================================================== -->
+
+<div class="card">
+
+    <div class="card-title">
+        Hospital Selling Price & GP
+    </div>
+
+
+    <div class="result-box">
+
+        <div class="result-row">
+
+            <span class="result-label">
+                Hospital Selling Price
+            </span>
+
+            <span
+                class="result-value highlight"
+                id="sellingPrice">
+
+                ₹0.00
+
+            </span>
+
+        </div>
+
+
+        <div class="result-row">
+
+            <span class="result-label">
+                Free Qty %
+            </span>
+
+            <span
+                class="result-value"
+                id="freeQtyPercent">
+
+                0.00%
+
+            </span>
+
+        </div>
+
+
+        <div class="result-row">
+
+            <span class="result-label">
+                Paid Qty
+            </span>
+
+            <span
+                class="result-value"
+                id="paidQty">
+
+                0
+
+            </span>
+
+        </div>
+
+
+        <div class="result-row">
+
+            <span class="result-label">
+                Free Qty
+            </span>
+
+            <span
+                class="result-value"
+                id="freeQty">
+
+                0
+
+            </span>
+
+        </div>
+
+
+        <div class="result-row">
+
+            <span class="result-label">
+                Total Qty
+            </span>
+
+            <span
+                class="result-value"
+                id="totalQty">
+
+                0
+
+            </span>
+
+        </div>
+
+
+        <div class="result-row">
+
+            <span class="result-label">
+                Total Sales Value
+            </span>
+
+            <span
+                class="result-value"
+                id="salesValue">
+
+                ₹0.00
+
+            </span>
+
+        </div>
+
+
+        <div class="result-row">
+
+            <span class="result-label">
+                GP / Paid Unit
+            </span>
+
+            <span
+                class="result-value highlight"
+                id="gpAmount">
+
+                ₹0.00
+
+            </span>
+
+        </div>
+
+
+        <div class="result-row">
+
+            <span class="result-label">
+                GP %
+            </span>
+
+            <span
+                class="result-value highlight"
+                id="gpPercent">
+
+                0.00%
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         RESET + SHARE
+         NOW BELOW HOSPITAL SELLING PRICE & GP
+    ================================================== -->
+
+    <div class="action-buttons">
+
+        <button
+            class="secondary-btn"
+            onclick="resetCalculator()">
+
+            RESET
+
+        </button>
+
+
+        <button
+            onclick="shareCalculation()">
+
+            ↗ SHARE CALCULATION
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     PASSWORD PROTECTED DETAILS
+===================================================== -->
+
+<div class="card">
+
+    <button
+        class="secondary-btn"
+        onclick="openPasswordModal()">
+
+        🔐 View Detailed Calculation
+
+    </button>
+
+
+    <div
+        id="detailsSection"
+        class="hidden-section"
+        style="margin-top:10px;">
+
+
+        <div class="card-title">
+            Confidential Calculation Details
+        </div>
+
+
+        <div class="detail-box">
+
+
+            <div class="detail-row">
+
+                <span>
+                    Product Code
+                </span>
+
+                <strong id="dProductCode">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Product Name
+                </span>
+
+                <strong id="dProductName">
+                    -
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    MRP
+                </span>
+
+                <strong id="dMRP">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    TP
+                </span>
+
+                <strong id="dTP">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Deal Rate
+                </span>
+
+                <strong id="dDealRate">
+                    0%
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Hospital Selling Price
+                </span>
+
+                <strong id="dSellingPrice">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Paid Qty
+                </span>
+
+                <strong id="dPaidQty">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Free Qty
+                </span>
+
+                <strong id="dFreeQty">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Total Qty
+                </span>
+
+                <strong id="dTotalQty">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Free Qty %
+                </span>
+
+                <strong id="dFreePercent">
+                    0%
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Total Sales Value
+                </span>
+
+                <strong id="dSalesValue">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Purchase Cost
+                </span>
+
+                <strong id="dPurchaseCost">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Total GP
+                </span>
+
+                <strong id="dTotalGP">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    GP / Paid Unit
+                </span>
+
+                <strong id="dGP">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    GP %
+                </span>
+
+                <strong id="dGPPercent">
+                    0.00%
+                </strong>
+
+            </div>
+
+
+            <div class="formula-box">
+
+                <strong>
+                    Calculation Formula
+                </strong>
+
+                <br><br>
+
+                Hospital Selling Price
+                =
+                MRP × (1 − Deal Rate%)
+
+                <br>
+
+                Sales Value
+                =
+                Hospital Selling Price × Paid Qty
+
+                <br>
+
+                Purchase Cost
+                =
+                TP × (Paid Qty + Free Qty)
+
+                <br>
+
+                Total GP
+                =
+                Sales Value − Purchase Cost
+
+                <br>
+
+                GP / Paid Unit
+                =
+                Total GP ÷ Paid Qty
+
+                <br>
+
+                GP %
+                =
+                Total GP ÷ Sales Value × 100
+
+            </div>
+
+
+        </div>
+
+
+        <button
+            class="secondary-btn"
+            style="margin-top:8px;"
+            onclick="hideDetails()">
+
+            Hide Details
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="footer">
+
+    Hospital Selling Price & GP Calculator
+
+</div>
+
+
+</div>
+
+
+<!-- =====================================================
+     PASSWORD MODAL
+===================================================== -->
+
+<div
+    id="passwordModal"
+    class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-title">
+            🔐 Enter Password
+        </div>
+
+
+        <input
+            type="password"
+            id="passwordInput"
+            placeholder="Enter password"
+            autocomplete="off">
+
+
+        <div
+            id="passwordError"
+            class="error">
+        </div>
+
+
+        <div class="modal-buttons">
+
+            <button onclick="checkPassword()">
+                VIEW
+            </button>
+
+
+            <button
+                class="secondary-btn"
+                onclick="closePasswordModal()">
+
+                CANCEL
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let products = [];
+
+let selectedProduct = null;
+
+const DETAIL_PASSWORD = "TYYKEM@123";
+
+
+/* =========================================================
+   LOAD CSV
+========================================================= */
+
+async function loadProducts() {
+
+    const status =
+        document.getElementById(
+            "productStatus"
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                "product-master.csv?v=" +
+                Date.now()
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "product-master.csv not found"
+            );
+
+        }
+
+
+        const csv =
+            await response.text();
+
+
+        products =
+            parseCSV(csv);
+
+
+        if (products.length === 0) {
+
+            throw new Error(
+                "No products found"
+            );
+
+        }
+
+
+        status.textContent =
+            "Product master loaded: " +
+            products.length +
+            " products";
+
+
+        status.className =
+            "status success";
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        status.textContent =
+            "Unable to load product-master.csv";
+
+
+        status.className =
+            "status warning";
+
+    }
+
+}
+
+
+/* =========================================================
+   CSV PARSER
+========================================================= */
+
+function parseCSV(csv) {
+
+    const lines =
+        csv.trim().split(/\r?\n/);
+
+
+    if (lines.length < 2) {
+
+        return [];
+
+    }
+
+
+    const headers =
+        parseCSVLine(lines[0])
+        .map(
+            h =>
+                h.trim().toLowerCase()
+        );
+
+
+    const result = [];
+
+
+    for (
+        let i = 1;
+        i < lines.length;
+        i++
+    ) {
+
+        if (!lines[i].trim()) {
+
+            continue;
+
+        }
+
+
+        const values =
+            parseCSVLine(lines[i]);
+
+
+        const obj = {};
+
+
+        headers.forEach(
+            (header, index) => {
+
+                obj[header] =
+                    (
+                        values[index] || ""
+                    ).trim();
+
+            }
+        );
+
+
+        result.push(obj);
+
+    }
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   CSV LINE PARSER
+========================================================= */
+
+function parseCSVLine(line) {
+
+    const result = [];
+
+    let current = "";
+
+    let insideQuotes = false;
+
+
+    for (
+        let i = 0;
+        i < line.length;
+        i++
+    ) {
+
+        const char = line[i];
+
+
+        if (char === '"') {
+
+            if (
+                insideQuotes &&
+                line[i + 1] === '"'
+            ) {
+
+                current += '"';
+
+                i++;
+
+            }
+
+            else {
+
+                insideQuotes =
+                    !insideQuotes;
+
+            }
+
+        }
+
+        else if (
+            char === "," &&
+            !insideQuotes
+        ) {
+
+            result.push(current);
+
+            current = "";
+
+        }
+
+        else {
+
+            current += char;
+
+        }
+
+    }
+
+
+    result.push(current);
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   PRODUCT SEARCH
+========================================================= */
+
+function searchProducts() {
+
+    const input =
+        document.getElementById(
+            "productSearch"
+        );
+
+
+    const list =
+        document.getElementById(
+            "productList"
+        );
+
+
+    const search =
+        input.value
+        .trim()
+        .toLowerCase();
+
+
+    list.innerHTML = "";
+
+
+    if (!search) {
+
+        list.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    const matches =
+        products
+        .filter(product => {
+
+            const name =
+                (
+                    product["product name"] ||
+                    ""
+                ).toLowerCase();
+
+
+            const code =
+                (
+                    product["product code"] ||
+                    ""
+                ).toLowerCase();
+
+
+            return (
+                name.includes(search) ||
+                code.includes(search)
+            );
+
+        })
+        .slice(0, 50);
+
+
+    if (matches.length === 0) {
+
+        list.innerHTML =
+            `
+            <div class="product-item">
+                No product found
+            </div>
+            `;
+
+
+        list.style.display =
+            "block";
+
+
+        return;
+
+    }
+
+
+    matches.forEach(product => {
+
+        const item =
+            document.createElement(
+                "div"
+            );
+
+
+        item.className =
+            "product-item";
+
+
+        item.innerHTML = `
+
+            <div class="product-name">
+                ${escapeHTML(
+                    product["product name"] || ""
+                )}
+            </div>
+
+            <div class="product-details">
+
+                Code:
+                ${escapeHTML(
+                    product["product code"] || ""
+                )}
+
+                &nbsp; | &nbsp;
+
+                Pack:
+                ${escapeHTML(
+                    product["pack size"] || ""
+                )}
+
+                &nbsp; | &nbsp;
+
+                MRP:
+                ₹${formatNumber(
+                    product["mrp"]
+                )}
+
+            </div>
+
+        `;
+
+
+        item.onclick =
+            function() {
+
+                selectProduct(
+                    product
+                );
+
+            };
+
+
+        list.appendChild(item);
+
+    });
+
+
+    list.style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   SELECT PRODUCT
+========================================================= */
+
+function selectProduct(product) {
+
+    selectedProduct =
+        product;
+
+
+    document.getElementById(
+        "productSearch"
+    ).value =
+        product["product name"] || "";
+
+
+    document.getElementById(
+        "productCode"
+    ).value =
+        product["product code"] || "";
+
+
+    document.getElementById(
+        "productName"
+    ).value =
+        product["product name"] || "";
+
+
+    document.getElementById(
+        "packSize"
+    ).value =
+        product["pack size"] || "";
+
+
+    document.getElementById(
+        "mrp"
+    ).value =
+        "₹" +
+        formatNumber(
+            product["mrp"]
+        );
+
+
+    document.getElementById(
+        "productList"
+    ).style.display =
+        "none";
+
+
+    hideDetails();
+
+    resetResults();
+
+}
+
+
+/* =========================================================
+   BONUS QTY PARSER
+   EXAMPLE:
+   10+2
+   20+4
+========================================================= */
+
+function parseBonusQty(value) {
+
+    value =
+        String(value || "")
+        .trim()
+        .replace(/\s/g, "");
+
+
+    const match =
+        value.match(
+            /^(\d+(?:\.\d+)?)\+(\d+(?:\.\d+)?)$/
+        );
+
+
+    if (!match) {
+
+        return null;
+
+    }
+
+
+    const paidQty =
+        parseFloat(match[1]);
+
+
+    const freeQty =
+        parseFloat(match[2]);
+
+
+    if (
+        paidQty <= 0 ||
+        freeQty < 0
+    ) {
+
+        return null;
+
+    }
+
+
+    return {
+
+        paidQty: paidQty,
+
+        freeQty: freeQty,
+
+        totalQty:
+            paidQty + freeQty,
+
+        freePercent:
+            (
+                freeQty /
+                paidQty
+            ) * 100
+
+    };
+
+}
+
+
+/* =========================================================
+   MAIN CALCULATION
+========================================================= */
+
+function calculateGP() {
+
+    /* PRODUCT VALIDATION */
+
+    if (!selectedProduct) {
+
+        alert(
+            "Please select a product."
+        );
+
+        return;
+
+    }
+
+
+    /* READ MASTER DATA */
+
+    const mrp =
+        parseFloat(
+            selectedProduct["mrp"]
+        );
+
+
+    const tp =
+        parseFloat(
+            selectedProduct["tp"]
+        );
+
+
+    const dealRate =
+        parseFloat(
+            document.getElementById(
+                "dealRate"
+            ).value
+        );
+
+
+    const bonusInput =
+        document.getElementById(
+            "bonusQty"
+        ).value
+        .trim();
+
+    /* Bonus Qty is optional. Blank means 1 paid + 0 free. */
+    const bonus = bonusInput === ""
+        ? {
+            paidQty: 1,
+            freeQty: 0,
+            totalQty: 1,
+            freePercent: 0
+        }
+        : parseBonusQty(bonusInput);
+
+
+    /* VALIDATION */
+
+    if (
+        isNaN(mrp) ||
+        isNaN(tp)
+    ) {
+
+        alert(
+            "MRP or TP is missing in product-master.csv."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        isNaN(dealRate) ||
+        dealRate < 0 ||
+        dealRate > 100
+    ) {
+
+        alert(
+            "Please enter Deal Rate between 0 and 100."
+        );
+
+        return;
+
+    }
+
+
+    if (!bonus) {
+
+        alert(
+            "Bonus Qty must be in format 10+2, 20+4, etc."
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       HOSPITAL SELLING PRICE
+    ===================================================== */
+
+    const sellingPrice =
+        mrp *
+        (
+            1 -
+            dealRate / 100
+        );
+
+
+    /* =====================================================
+       FREE QTY %
+    ===================================================== */
+
+    const freeQtyPercent =
+        bonus.freePercent;
+
+
+    /* =====================================================
+       SALES VALUE
+    ===================================================== */
+
+    const salesValue =
+        sellingPrice *
+        bonus.paidQty;
+
+
+    /* =====================================================
+       PURCHASE COST
+
+       TP is paid for both paid + free quantity.
+    ===================================================== */
+
+    const purchaseCost =
+        tp *
+        bonus.totalQty;
+
+
+    /* =====================================================
+       TOTAL GP
+    ===================================================== */
+
+    const totalGP =
+        salesValue -
+        purchaseCost;
+
+
+    /* =====================================================
+       GP PER PAID UNIT
+    ===================================================== */
+
+    const gpPerPaidUnit =
+        bonus.paidQty > 0
+        ? totalGP / bonus.paidQty
+        : 0;
+
+
+    /* =====================================================
+       GP %
+    ===================================================== */
+
+    const gpPercent =
+        salesValue > 0
+        ? (
+            totalGP /
+            salesValue
+        ) * 100
+        : 0;
+
+
+    /* =====================================================
+       NORMAL RESULTS
+    ===================================================== */
+
+    document.getElementById(
+        "sellingPrice"
+    ).textContent =
+        "₹" +
+        formatNumber(
+            sellingPrice
+        );
+
+
+    document.getElementById(
+        "freeQtyPercent"
+    ).textContent =
+        formatNumber(
+            freeQtyPercent
+        ) + "%";
+
+
+    document.getElementById(
+        "paidQty"
+    ).textContent =
+        formatNumber(
+            bonus.paidQty
+        );
+
+
+    document.getElementById(
+        "freeQty"
+    ).textContent =
+        formatNumber(
+            bonus.freeQty
+        );
+
+
+    document.getElementById(
+        "totalQty"
+    ).textContent =
+        formatNumber(
+            bonus.totalQty
+        );
+
+
+    document.getElementById(
+        "salesValue"
+    ).textContent =
+        "₹" +
+        formatNumber(
+            salesValue
+        );
+
+
+    document.getElementById(
+        "gpAmount"
+    ).textContent =
+        "₹" +
+        formatNumber(
+            gpPerPaidUnit
+        );
+
+
+    document.getElementById(
+        "gpPercent"
+    ).textContent =
+        formatNumber(
+            gpPercent
+        ) + "%";
+
+
+    /* =====================================================
+       CONFIDENTIAL DETAILS
+    ===================================================== */
+
+    document.getElementById(
+        "dProductCode"
+    ).textContent =
+        selectedProduct[
+            "product code"
+        ] || "-";
+
+
+    document.getElementById(
+        "dProductName"
+    ).textContent =
+        selectedProduct[
+            "product name"
+        ] || "-";
+
+
+    document.getElementById(
+        "dMRP"
+    ).textContent =
+        "₹" +
+        formatNumber(
+            mrp
+        );
+
+
+    document.getElementById(
+        "dTP"
+    ).textContent =
+        "₹" +
+        formatNumber(
+            tp
+        );
+
+
+    document.getElementById(
+        "dDealRate"
+    ).textContent =
+        formatNumber(
+            dealRate
+        ) + "%";
+
+
+    document.getElementById(
+        "dSellingPrice"
+    ).textContent =
+        "₹" +
+        formatNumber(
+            sellingPrice
+        );
+
+
+    document.getElementById(
+        "dPaidQty"
+    ).textContent =
+        formatNumber(
+            bonus.paidQty
+        );
+
+
+    document.getElementById(
+        "dFreeQty"
+    ).textContent =
+        formatNumber(
+            bonus.freeQty
+        );
+
+
+    document.getElementById(
+        "dTotalQty"
+    ).textContent =
+        formatNumber(
+            bonus.totalQty
+        );
+
+
+    document.getElementById(
+        "dFreePercent"
+    ).textContent =
+        formatNumber(
+            freeQtyPercent
+        ) + "%";
+
+
+    document.getElementById(
+        "dSalesValue"
+    ).textContent =
+        "₹" +
+        formatNumber(
+            salesValue
+        );
+
+
+    document.getElementById(
+        "dPurchaseCost"
+    ).textContent =
+        "₹" +
+        formatNumber(
+            purchaseCost
+        );
+
+
+    document.getElementById(
+        "dTotalGP"
+    ).textContent =
+        "₹" +
+        formatNumber(
+            totalGP
+        );
+
+
+    document.getElementById(
+        "dGP"
+    ).textContent =
+        "₹" +
+        formatNumber(
+            gpPerPaidUnit
+        );
+
+
+    document.getElementById(
+        "dGPPercent"
+    ).textContent =
+        formatNumber(
+            gpPercent
+        ) + "%";
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetCalculator() {
+
+    selectedProduct = null;
+
+
+    document.getElementById(
+        "productSearch"
+    ).value = "";
+
+
+    document.getElementById(
+        "productCode"
+    ).value = "";
+
+
+    document.getElementById(
+        "productName"
+    ).value = "";
+
+
+    document.getElementById(
+        "packSize"
+    ).value = "";
+
+
+    document.getElementById(
+        "mrp"
+    ).value = "";
+
+
+    document.getElementById(
+        "dealRate"
+    ).value = "";
+
+
+    document.getElementById(
+        "bonusQty"
+    ).value = "";
+
+
+    document.getElementById(
+        "productList"
+    ).style.display =
+        "none";
+
+
+    hideDetails();
+
+    resetResults();
+
+}
+
+
+/* =========================================================
+   RESET RESULTS
+========================================================= */
+
+function resetResults() {
+
+    document.getElementById(
+        "sellingPrice"
+    ).textContent =
+        "₹0.00";
+
+
+    document.getElementById(
+        "freeQtyPercent"
+    ).textContent =
+        "0.00%";
+
+
+    document.getElementById(
+        "paidQty"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "freeQty"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "totalQty"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "salesValue"
+    ).textContent =
+        "₹0.00";
+
+
+    document.getElementById(
+        "gpAmount"
+    ).textContent =
+        "₹0.00";
+
+
+    document.getElementById(
+        "gpPercent"
+    ).textContent =
+        "0.00%";
+
+
+    document.getElementById(
+        "dProductCode"
+    ).textContent =
+        "-";
+
+
+    document.getElementById(
+        "dProductName"
+    ).textContent =
+        "-";
+
+
+    document.getElementById(
+        "dMRP"
+    ).textContent =
+        "₹0.00";
+
+
+    document.getElementById(
+        "dTP"
+    ).textContent =
+        "₹0.00";
+
+
+    document.getElementById(
+        "dDealRate"
+    ).textContent =
+        "0%";
+
+
+    document.getElementById(
+        "dSellingPrice"
+    ).textContent =
+        "₹0.00";
+
+
+    document.getElementById(
+        "dPaidQty"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "dFreeQty"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "dTotalQty"
+    ).textContent =
+        "0";
+
+
+    document.getElementById(
+        "dFreePercent"
+    ).textContent =
+        "0%";
+
+
+    document.getElementById(
+        "dSalesValue"
+    ).textContent =
+        "₹0.00";
+
+
+    document.getElementById(
+        "dPurchaseCost"
+    ).textContent =
+        "₹0.00";
+
+
+    document.getElementById(
+        "dTotalGP"
+    ).textContent =
+        "₹0.00";
+
+
+    document.getElementById(
+        "dGP"
+    ).textContent =
+        "₹0.00";
+
+
+    document.getElementById(
+        "dGPPercent"
+    ).textContent =
+        "0.00%";
+
+}
+
+
+/* =========================================================
+   SHARE CALCULATED DATA
+========================================================= */
+
+async function shareCalculation() {
+
+    if (!selectedProduct) {
+
+        alert(
+            "Please select a product and calculate first."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       Check whether calculation has actually
+       been performed.
+    */
+
+    const sellingPrice =
+        document.getElementById(
+            "sellingPrice"
+        ).textContent;
+
+
+    if (
+        sellingPrice === "₹0.00"
+    ) {
+
+        alert(
+            "Please calculate the GP before sharing."
+        );
+
+        return;
+
+    }
+
+
+    const productName =
+        document.getElementById(
+            "productName"
+        ).value;
+
+
+    const productCode =
+        document.getElementById(
+            "productCode"
+        ).value;
+
+
+    const packSize =
+        document.getElementById(
+            "packSize"
+        ).value;
+
+
+    const mrp =
+        document.getElementById(
+            "mrp"
+        ).value;
+
+
+    const dealRate =
+        document.getElementById(
+            "dealRate"
+        ).value;
+
+
+    const bonusQty =
+        document.getElementById(
+            "bonusQty"
+        ).value;
+
+
+    const freeQtyPercent =
+        document.getElementById(
+            "freeQtyPercent"
+        ).textContent;
+
+
+    const paidQty =
+        document.getElementById(
+            "paidQty"
+        ).textContent;
+
+
+    const freeQty =
+        document.getElementById(
+            "freeQty"
+        ).textContent;
+
+
+    const totalQty =
+        document.getElementById(
+            "totalQty"
+        ).textContent;
+
+
+    const salesValue =
+        document.getElementById(
+            "salesValue"
+        ).textContent;
+
+
+    const gpAmount =
+        document.getElementById(
+            "gpAmount"
+        ).textContent;
+
+
+    const gpPercent =
+        document.getElementById(
+            "gpPercent"
+        ).textContent;
+
+
+    /*
+       TP and Purchase Cost are intentionally
+       NOT included in shared data.
+    */
+
+    const shareText =
+
+`HOSPITAL SELLING PRICE & GP
+
+Product: ${productName}
+Product Code: ${productCode}
+Pack Size: ${packSize}
+
+MRP: ${mrp}
+Deal Rate: ${dealRate}%
+Bonus Qty: ${bonusQty}
+Free Qty: ${freeQtyPercent}
+
+Hospital Selling Price: ${sellingPrice}
+Paid Qty: ${paidQty}
+Free Qty: ${freeQty}
+Total Qty: ${totalQty}
+
+Total Sales Value: ${salesValue}
+
+GP / Paid Unit: ${gpAmount}
+GP %: ${gpPercent}`;
+
+
+    /* NATIVE SHARE */
+
+    if (
+        navigator.share
+    ) {
+
+        try {
+
+            await navigator.share({
+
+                title:
+                    "Hospital Selling Price & GP",
+
+                text:
+                    shareText
+
+            });
+
+            return;
+
+        }
+
+        catch (error) {
+
+            if (
+                error.name ===
+                "AbortError"
+            ) {
+
+                return;
+
+            }
+
+        }
+
+    }
+
+
+    /* FALLBACK COPY */
+
+    try {
+
+        await navigator.clipboard.writeText(
+            shareText
+        );
+
+
+        alert(
+            "Calculated data copied to clipboard."
+        );
+
+    }
+
+    catch (error) {
+
+        const textArea =
+            document.createElement(
+                "textarea"
+            );
+
+
+        textArea.value =
+            shareText;
+
+
+        textArea.style.position =
+            "fixed";
+
+
+        textArea.style.left =
+            "-9999px";
+
+
+        document.body.appendChild(
+            textArea
+        );
+
+
+        textArea.select();
+
+
+        document.execCommand(
+            "copy"
+        );
+
+
+        document.body.removeChild(
+            textArea
+        );
+
+
+        alert(
+            "Calculated data copied to clipboard."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PASSWORD MODAL
+========================================================= */
+
+function openPasswordModal() {
+
+    document.getElementById(
+        "passwordInput"
+    ).value = "";
+
+
+    document.getElementById(
+        "passwordError"
+    ).textContent = "";
+
+
+    document.getElementById(
+        "passwordModal"
+    ).style.display =
+        "flex";
+
+
+    setTimeout(
+        function() {
+
+            document.getElementById(
+                "passwordInput"
+            ).focus();
+
+        },
+        100
+    );
+
+}
+
+
+function closePasswordModal() {
+
+    document.getElementById(
+        "passwordModal"
+    ).style.display =
+        "none";
+
+}
+
+
+function checkPassword() {
+
+    const password =
+        document.getElementById(
+            "passwordInput"
+        ).value;
+
+
+    if (
+        password ===
+        DETAIL_PASSWORD
+    ) {
+
+        closePasswordModal();
+
+
+        document.getElementById(
+            "detailsSection"
+        ).style.display =
+            "block";
+
+
+        document.getElementById(
+            "detailsSection"
+        ).scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+    else {
+
+        document.getElementById(
+            "passwordError"
+        ).textContent =
+            "Incorrect password.";
+
+    }
+
+}
+
+
+/* =========================================================
+   HIDE DETAILS
+========================================================= */
+
+function hideDetails() {
+
+    document.getElementById(
+        "detailsSection"
+    ).style.display =
+        "none";
+
+}
+
+
+/* =========================================================
+   NUMBER FORMAT
+========================================================= */
+
+function formatNumber(value) {
+
+    const number =
+        parseFloat(value);
+
+
+    if (isNaN(number)) {
+
+        return "0.00";
+
+    }
+
+
+    return number.toLocaleString(
+        "en-IN",
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    );
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHTML(value) {
+
+    return String(
+        value || ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE PRODUCT LIST
+========================================================= */
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const search =
+            document.getElementById(
+                "productSearch"
+            );
+
+
+        const list =
+            document.getElementById(
+                "productList"
+            );
+
+
+        if (
+            event.target !== search &&
+            !list.contains(
+                event.target
+            )
+        ) {
+
+            list.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PASSWORD ENTER KEY
+========================================================= */
+
+document.getElementById(
+    "passwordInput"
+).addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            checkPassword();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   LOAD PRODUCT MASTER
+========================================================= */
+
+loadProducts();
+
+</script>
+
+</body>
+</html>
